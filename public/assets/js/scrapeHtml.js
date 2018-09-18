@@ -4,8 +4,14 @@ $(document).ready(function() {
     $.getJSON("/articles", function (data) {
         // For each one
         for (var i = 0; i < data.length; i++) {
+            data[i].link =  data[i].link.replace("http://www.bbc.com/", "");
+            data[i].link =  data[i].link.replace("https://www.bbc.com", "");
             // Display the apropos information on the page
-            $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br /><a href=\"" + data[i].link +  "\">"+ data[i].link  +"</a><br /><img src=\"http:" + data[i].mediaImg +  "\"/><br />" + data[i].mediaTag +  "</p>");
+            $("#articles").append("<p data-id='" + data[i]._id + "'>"
+                + data[i].title
+                + "<br /><a href=\"https://www.bbc.com" + data[i].link +  "\">https://www.bbc.com"+ data[i].link
+                +"</a><br /><img src=\"http:" + data[i].mediaImg +  "\"/><br />"
+                + data[i].mediaTag +  "</p>");
         }
     });
 

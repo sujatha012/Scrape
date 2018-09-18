@@ -15,27 +15,36 @@ router.get("/scrape", function(req, res) {
         var $ = cheerio.load(html);
 
         // Now, we grab every h2 within an article tag, and do the following:
-        $('ul li div .media').each(function(i, element) {
+        $('.media-list__item').each(function(i, element) {
             // Save an empty result object
             console.log("I " + i)
-            //console.log("Element : " + $(this).text() );
             var $1 = cheerio.load($(this).html());
-           // console.log($1(this).html());
-            console.log($1('div h3 a').text());
-            console.log($1('div h3 a').attr('href'));
-            console.log($1('div div img ').attr('src'));
-            console.log($1('div a').filter('.media__link').text());
-            console.log($1('div p').filter('.media__summary').text());
-            console.log($1('div a').filter('.media__tag').text());
-            var result = {};
+            var imgSrc = $1('div div div div img').attr('src');
+            console.log(imgSrc.search(/data:image/));
 
-//console.log($1('div h3 a .media__link').html());
-            // Add the text and href of every link, and save them as properties of the result object
-            result.title = $1('div h3 a').text().trim();
-            result.link =$1('div h3 a').attr('href');
-            result.mediaImg =$1('div div img').attr('src');
-            result.mediaTag=$1('div a').filter('.media__tag').text();
-            console.log(result);
+            if(imgSrc.search(/data:image/) !== -1)
+            {
+               // result.mediaImg="";
+            }
+            else{
+
+             console.log($1('div div h3 a').text());
+             console.log($1('div div h3 a').attr('href'));
+             console.log($1('div div div div img ').attr('src'));
+            console.log($1('div div div div').html());
+//             console.log($1('div a').filter('.media__link').text());
+//             console.log($1('div p').filter('.media__summary').text());
+             console.log($1('div div a').filter('.media__tag').text());
+             var result = {};
+//
+// //console.log($1('div h3 a .media__link').html());
+//             // Add the text and href of every link, and save them as properties of the result object
+            result.title = $1('div div h3 a').text().trim();
+            result.link =$1('div div h3 a').attr('href');
+                result.mediaImg =imgSrc;
+
+            result.mediaTag=$1('div div a').filter('.media__tag').text();
+             console.log(result);
 
             // Create a new Article using the `result` object built from scraping
             db.Article.create(result)
@@ -49,6 +58,7 @@ router.get("/scrape", function(req, res) {
 
                  //   return res.json(err);
                 });
+                }
         });
 
         // If we were able to successfully scrape and save an Article, send a message to the client
@@ -87,10 +97,19 @@ router.get("/articles/:id", function(req, res) {
         });
 });
 
+router.delete("/articles", function(req, res){
+   db.Article.deleteMany({}, function(err, results){
+       console.log("Articles : " +  results.result);
+   })
+    db.Note.deleteMany({}, function(err, results){
+        console.log("Notes : " +results.result);
+    })
+});
+
 // Route for saving/updating an Article's associated Note
 router.post("/articles/:id", function(req, res) {
     // Create a new note and pass the req.body to the entry
-    console.log(req.body);
+
     db.Note.create(req.body)
         .then(function(dbNote) {
             // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
