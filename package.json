@@ -2,9 +2,10 @@
   "name": "scrape",
   "version": "1.0.0",
   "description": "News Scraping for BBC",
-  "main": "index.js",
+  "main": "scrape.js",
   "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "scrape.js"
+
   },
   "repository": {
     "type": "git",
