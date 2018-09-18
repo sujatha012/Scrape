@@ -5,7 +5,9 @@ var cheerio = require("cheerio");
 
 // Import the model (cat.js) to use its database functions.
 var db = require("../models/dbModel.js");
-
+router.get("/", function(req, res) {
+    res.redirect("/scrape");
+} );
 // Create all our routes and set up logic within those routes where required.
 router.get("/scrape", function(req, res) {
     // First, we grab the body of the html with request
